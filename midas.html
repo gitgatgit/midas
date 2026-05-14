@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShitMidas.com</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brown: #5c3317;
+      --dark-brown: #2e1a0a;
+      --gold: #c9a14a;
+      --shit-yellow: #b8860b;
+      --cream: #f5e6c8;
+      --stink-green: #6b7c3a;
+      --bg: #1a0e05;
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--cream);
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E💩%3C/text%3E%3C/svg%3E") 16 16, auto;
+    }
+
+    /* ── Rain Canvas ── */
+    #rain-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: .045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 200px;
+    }
+
+    /* ── Layout ── */
+    .page {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      width: 100%;
+      padding: 80px 24px 60px;
+      text-align: center;
+      position: relative;
+    }
+
+    .crown-badge {
+      display: inline-block;
+      font-size: 3rem;
+      animation: wobble 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px var(--gold));
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 14vw, 10rem);
+      line-height: .9;
+      letter-spacing: .04em;
+      background: linear-gradient(135deg, var(--gold) 0%, #e8c97a 40%, var(--shit-yellow) 70%, var(--brown) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      position: relative;
+    }
+    .logo span.shit { color: #7c4a1e; -webkit-text-fill-color: #7c4a1e; }
+
+    .logo-sub {
+      font-family: 'Permanent Marker', cursive;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      color: var(--stink-green);
+      letter-spacing: .08em;
+      margin-top: 4px;
+      opacity: .9;
+    }
+
+    .tagline {
+      margin-top: 28px;
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      font-weight: 700;
+      color: var(--cream);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.4;
+    }
+    .tagline .mac {
+      font-family: 'Permanent Marker', cursive;
+      color: var(--gold);
+      font-size: 1.15em;
+    }
+
+    /* ── Counter ── */
+    .counter-section {
+      margin: 48px auto 0;
+      text-align: center;
+      padding: 0 24px;
+    }
+    .counter-label {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .25em;
+      color: var(--gold);
+      opacity: .7;
+      margin-bottom: 10px;
+    }
+    .counter-display {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 10vw, 7rem);
+      color: var(--brown);
+      text-shadow: 0 0 30px #b8860b88, 0 4px 0 #2e1a0a;
+      line-height: 1;
+      background: linear-gradient(180deg, #e8c060 0%, #8b5e20 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: transform .1s;
+    }
+    .counter-display.bump {
+      transform: scale(1.12);
+    }
+    .counter-unit {
+      font-size: .85rem;
+      opacity: .5;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      margin-top: 4px;
+    }
+
+    /* ── Big red button ── */
+    .btn-wrap {
+      margin: 52px auto 0;
+      text-align: center;
+    }
+    .mac-btn {
+      position: relative;
+      background: linear-gradient(145deg, #8b1a1a, #5a0e0e);
+      border: none;
+      border-radius: 6px;
+      padding: 22px 52px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: .12em;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #3a0808, 0 12px 40px #ff000044;
+      transition: transform .08s, box-shadow .08s;
+      overflow: hidden;
+    }
+    .mac-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .mac-btn:hover { transform: translateY(-3px); box-shadow: 0 11px 0 #3a0808, 0 18px 50px #ff000066; }
+    .mac-btn:active { transform: translateY(5px); box-shadow: 0 3px 0 #3a0808, 0 6px 20px #ff000033; }
+
+    .btn-sub {
+      margin-top: 12px;
+      font-size: .75rem;
+      opacity: .4;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Incident log ── */
+    .log-section {
+      width: 100%;
+      max-width: 640px;
+      margin: 60px auto 0;
+      padding: 0 24px 80px;
+    }
+    .log-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: .1em;
+      color: var(--gold);
+      border-bottom: 1px solid #5c331744;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .log-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .log-item {
+      background: #2e1a0a66;
+      border: 1px solid #5c331733;
+      border-left: 3px solid var(--brown);
+      border-radius: 4px;
+      padding: 12px 16px;
+      font-size: .9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      animation: slide-in .35s ease both;
+    }
+    .log-item .emoji { font-size: 1.3rem; flex-shrink: 0; }
+    .log-item .text { flex: 1; line-height: 1.4; opacity: .85; }
+    .log-item .time { font-size: .7rem; opacity: .4; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+    /* ── Animations ── */
+    @keyframes wobble {
+      0%,100% { transform: rotate(-8deg) scale(1); }
+      50%      { transform: rotate(8deg) scale(1.1); }
+    }
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateX(-16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes stink-pulse {
+      0%,100% { opacity: .25; transform: scale(1); }
+      50%      { opacity: .55; transform: scale(1.08); }
+    }
+
+    /* ── Stink lines SVG bg ── */
+    .stink-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .18;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Stink atmosphere -->
+<svg class="stink-bg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="sg" cx="50%" cy="80%" r="70%">
+      <stop offset="0%" stop-color="#6b7c3a"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#sg)" style="animation: stink-pulse 4s ease-in-out infinite;"/>
+</svg>
+
+<!-- Falling poop canvas -->
+<canvas id="rain-canvas"></canvas>
+
+<div class="page">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="crown-badge">👑</div>
+    <h1 class="logo">ShitMidas</h1>
+    <p class="logo-sub">.com</p>
+    <p class="tagline">
+      Every time <span class="mac">Mac</span> shows up,<br>
+      the heavens open and it rains pure, uncut 💩
+    </p>
+  </section>
+
+  <!-- COUNTER -->
+  <section class="counter-section">
+    <p class="counter-label">Confirmed Mac appearances</p>
+    <div class="counter-display" id="counter">0</div>
+    <p class="counter-unit">💩 incidents recorded</p>
+  </section>
+
+  <!-- BUTTON -->
+  <div class="btn-wrap">
+    <button class="mac-btn" id="mac-btn" onclick="macAppeared()">
+      💩 MAC JUST APPEARED
+    </button>
+    <p class="btn-sub">Press every time Mac shows his face</p>
+  </div>
+
+  <!-- LOG -->
+  <section class="log-section">
+    <p class="log-title">📋 Incident Log</p>
+    <ul class="log-list" id="log-list"></ul>
+  </section>
+
+</div>
+
+<script>
+  // ── State ──
+  let count = parseInt(localStorage.getItem('shitmidas_count') || '0');
+  const logs = JSON.parse(localStorage.getItem('shitmidas_logs') || '[]');
+
+  const incidents = [
+    "Mac walked in. Immediate brown cloud formed overhead.",
+    "Mac said hi. Ceiling opened. Fate confirmed.",
+    "Mac joined the call. You know what happened next.",
+    "Mac entered the room. Classical music played backwards.",
+    "Mac appeared on screen. Physics briefly stopped working.",
+    "Mac showed up unannounced. Predictable consequences followed.",
+    "Mac sent a message. The sky darkened.",
+    "Mac popped up. You didn't even have time to open an umbrella.",
+    "Mac materialised. Local gravity increased by 30%.",
+    "Mac was spotted. A lone trombone played in the distance.",
+    "Mac arrived. Meteorologists remain baffled.",
+    "Mac graced us with his presence. Same old story.",
+    "Mac appeared. Somewhere a golden toilet flushed itself.",
+    "Mac showed his face. Everyone else showed their disappointment.",
+    "Mac checked in. Nature, as always, responded in kind.",
+  ];
+
+  // ── Render ──
+  function updateCounter() {
+    document.getElementById('counter').textContent = count;
+  }
+
+  function renderLogs() {
+    const el = document.getElementById('log-list');
+    el.innerHTML = '';
+    [...logs].reverse().slice(0, 8).forEach(log => {
+      const li = document.createElement('li');
+      li.className = 'log-item';
+      li.innerHTML = `
+        <span class="emoji">💩</span>
+        <span class="text">${log.text}</span>
+        <span class="time">${log.time}</span>
+      `;
+      el.appendChild(li);
+    });
+  }
+
+  // ── Poop rain ──
+  const canvas = document.getElementById('rain-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const drops = [];
+
+  function spawnDrops(n = 60) {
+    for (let i = 0; i < n; i++) {
+      drops.push({
+        x: Math.random() * canvas.width,
+        y: -60 - Math.random() * 300,
+        size: 16 + Math.random() * 28,
+        speed: 3 + Math.random() * 5,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - .5) * .15,
+        opacity: 0.6 + Math.random() * 0.4,
+        wobble: Math.random() * Math.PI * 2,
+        wobbleSpeed: 0.03 + Math.random() * 0.04,
+      });
+    }
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = drops.length - 1; i >= 0; i--) {
+      const d = drops[i];
+      d.y += d.speed;
+      d.rot += d.rotSpeed;
+      d.wobble += d.wobbleSpeed;
+      d.x += Math.sin(d.wobble) * 0.8;
+      ctx.save();
+      ctx.globalAlpha = d.opacity;
+      ctx.translate(d.x, d.y);
+      ctx.rotate(d.rot);
+      ctx.font = `${d.size}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('💩', 0, 0);
+      ctx.restore();
+      if (d.y > canvas.height + 80) drops.splice(i, 1);
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  // ── Main action ──
+  function macAppeared() {
+    count++;
+    localStorage.setItem('shitmidas_count', count);
+
+    // Counter bump
+    const el = document.getElementById('counter');
+    el.textContent = count;
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+    setTimeout(() => el.classList.remove('bump'), 200);
+
+    // Log entry
+    const text = incidents[Math.floor(Math.random() * incidents.length)];
+    const now = new Date();
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    logs.push({ text, time });
+    if (logs.length > 50) logs.shift();
+    localStorage.setItem('shitmidas_logs', JSON.stringify(logs));
+    renderLogs();
+
+    // Rain burst
+    spawnDrops(70 + Math.min(count * 5, 80));
+
+    // Screen flash
+    flashScreen();
+  }
+
+  function flashScreen() {
+    const flash = document.createElement('div');
+    Object.assign(flash.style, {
+      position: 'fixed', inset: 0, zIndex: 999,
+      background: 'radial-gradient(ellipse at center, #b8860b33, transparent 70%)',
+      pointerEvents: 'none', animation: 'none',
+      transition: 'opacity .5s',
+      opacity: '1',
+    });
+    document.body.appendChild(flash);
+    setTimeout(() => { flash.style.opacity = '0'; }, 50);
+    setTimeout(() => flash.remove(), 600);
+  }
+
+  // ── Init ──
+  updateCounter();
+  renderLogs();
+  if (count > 0) spawnDrops(Math.min(count * 3, 40)); // ambient on reload
+</script>
+</body>
+</html>
